@@ -3,7 +3,7 @@ resources:
   - name: spring-music-repo
     type: git
     source: 
-    uri: https://github.com/mdolan-pivotal/spring-music
+      uri: https://github.com/mdolan-pivotal/spring-music
 
   - name: version
     type: semver
@@ -17,12 +17,6 @@ resources:
       initial_version: 1.0.0
 
 jobs:
-  - name: concourse-exercise
-    serial: true
-    public: true
-    plan: 
-      - get: spring-music
-        trigger: true
   - name: unit
     plan:
       - get: spring-music-repo
@@ -30,4 +24,4 @@ jobs:
       - task: unit
         file: spring-music-repo/ci/concourse/tasks/unit.yml
   - name: build-binary
-    serial: true #build will queue and execute one-by-one
+    #serial: true #build will queue and execute one-by-one
