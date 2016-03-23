@@ -1,6 +1,6 @@
 ---
 resources:
-  - name: GitHub-Repo
+  - name: Git-Repo
     type: git
     source: 
     uri: https://github.com/mdolan-pivotal/spring-music
@@ -10,5 +10,5 @@ jobs:
     serial: true
     public: true
     plan: 
-      - get: GitHub-Repo
+      - get: Git-Repo
         trigger: true
