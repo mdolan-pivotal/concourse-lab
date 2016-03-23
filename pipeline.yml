@@ -1,0 +1,14 @@
+---
+resources:
+  - name: GitHub-Repo
+    type: git
+    source: 
+    uri: https://github.com/mdolan-pivotal/spring-music
+
+jobs:
+  - name: concourse-exercise
+    serial: true
+    public: true
+    plan: 
+      - get: GitHub-Repo
+        trigger: true
