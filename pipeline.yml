@@ -28,5 +28,6 @@ jobs:
       - get: spring-music-repo
         trigger: true
         passed: [unit]
+      - get: version
       - task: build
         file: spring-music-repo/ci/concourse/tasks/build.yml
