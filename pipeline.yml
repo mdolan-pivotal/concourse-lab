@@ -1,14 +1,33 @@
 ---
 resources:
-  - name: Git-Repo
+  - name: spring-music-repo
     type: git
     source: 
     uri: https://github.com/mdolan-pivotal/spring-music
+
+  - name: version
+    type: semver
+    source:
+      driver: s3
+      bucket: mdolan-pivotal-spring-music-artifacts
+      key: current-version
+      access_key_id: {{aws_access_key}}
+      secret_key_id: {{aws_secret_key}}
+      region_name: us-west-2
+      initial_version: 1.0.0
 
 jobs:
   - name: concourse-exercise
     serial: true
     public: true
     plan: 
-      - get: Git-Repo
+      - get: spring-music
         trigger: true
+  - name: unit
+    plan:
+      - get: spring-music-repo
+        trigger: true
+      - task: unit
+        file: spring-music-repo/ci/concourse/tasks/unit.yml
+  - name: build-binary
+    serial: true #build will queue and execute one-by-one
