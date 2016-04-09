@@ -3,32 +3,36 @@ resources:
   - name: spring-music-repo
     type: git
     source: 
-      uri: https://github.com/mdolan-pivotal/spring-music
+      uri: https://github.com/mdolan-pivotal/spring-music.git
 
   - name: version
     type: semver
     source:
-      driver: s3
-      bucket: mdolan-pivotal-spring-music-artifacts
+      bucket: spring-music-mdolan-repo
       key: current-version
       access_key_id: {{aws_access_key}}
-      secret_key_id: {{aws_secret_key}}
-      region_name: us-west-2
-      initial_version: 1.0.0
+      secret_access_key: {{aws_secret_key}}
+      initial_version: 1.1.1
+
+  - name: resource-deploy-web-app
+    type: cf
+    source:
+      api: {{cf-api}}
+      username: {{cf-username}}
+      password: {{cf-password}}
+      organization: {{cf-organization}}
+      space: {{cf-space}}
+      skip_cert_check: true
 
 jobs:
-  - name: unit
+  - name: deploy-app
+    serial: true
     plan:
       - get: spring-music-repo
         trigger: true
-      - task: unit
+      - task: unit-tests
         file: spring-music-repo/ci/concourse/tasks/unit.yml
-  - name: build-binary
-    plan:
-      - get: spring-music-repo
-        trigger: true
-        passed: [unit]
-      - get: version
-        params: {bump: minor}
-      - task: build
-        file: spring-music-repo/ci/concourse/tasks/build.yml
+      - put: resource-deploy-web-app
+        params:
+          manifest:  spring-music-repo/manifest.yml
+          path: spring-music-repo/build/libs/spring-music.war
