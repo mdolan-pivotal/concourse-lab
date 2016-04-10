@@ -30,6 +30,8 @@ jobs:
     plan:
       - get: spring-music-repo
         trigger: true
+      - put: version
+        params: {bump: minor}
       - task: unit-tests
         file: spring-music-repo/ci/concourse/tasks/unit.yml
       - put: resource-deploy-web-app
